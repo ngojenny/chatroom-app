@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 
-import firebase from "../../firebase";
-import NewChatroomForm from "../NewChatroomForm/NewChatroomForm";
+import firebase from '../../firebase';
+import NewChatroomForm from '../NewChatroomForm/NewChatroomForm';
 
 const db = firebase.firestore();
 
@@ -11,18 +11,17 @@ class Sidebar extends Component {
     this.state = {
       newChatroomFormVisible: false,
       error: null,
-      chatrooms: []
+      chatrooms: [],
+      activeChatroom: null
     };
   }
 
   componentDidMount() {
-    console.log("mounting");
-    db.collection("chatrooms").onSnapshot(querySnapshot => {
-      console.log("querySnapshot", querySnapshot);
+
+    db.collection('chatrooms').orderBy('created', 'desc').onSnapshot(querySnapshot => {
       const chatroomsFromDatabaseArray = [];
 
       querySnapshot.forEach(doc => {
-        console.log(doc.id, " => ", doc.data());
         chatroomsFromDatabaseArray.push(doc.data());
       });
 
@@ -30,12 +29,13 @@ class Sidebar extends Component {
         chatrooms: chatroomsFromDatabaseArray
       });
     });
+
   }
 
   createChatroomInDatabase = (e, chatroomName) => {
     //called from <NewChatroomForm /> child component
     e.preventDefault();
-    const chatroomRef = db.collection("chatrooms").doc();
+    const chatroomRef = db.collection('chatrooms').doc();
 
     const trimmedChatroomName = chatroomName.trim();
     if (trimmedChatroomName.length > 0) {
@@ -43,7 +43,8 @@ class Sidebar extends Component {
       chatroomRef.set({
         admin: this.props.user.uid,
         name: chatroomName,
-        docId: chatroomRef.id
+        docId: chatroomRef.id,
+        created: firebase.firestore.Timestamp.fromDate(new Date())
       });
       //hide <NewChatroomForm />
       this.setState({
@@ -51,7 +52,7 @@ class Sidebar extends Component {
       });
     } else {
       this.setState({
-        error: "Oopsy! Something went wrong, please try again"
+        error: 'Oopsy! Something went wrong, please try again'
       });
     }
   };
@@ -69,7 +70,7 @@ class Sidebar extends Component {
         {this.state.chatrooms.length > 0 && (
           this.state.chatrooms.map((chatroomData) => {
             return (
-              <div className="chatroom-thumbnail">
+              <div className="chatroom-thumbnail" key={chatroomData.docId}>
                 <h3>{chatroomData.name}</h3>
               </div>
             )
