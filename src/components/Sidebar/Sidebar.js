@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 
-import firebase from '../../firebase';
+import firebase, { db } from '../../firebase';
 import NewChatroomForm from '../NewChatroomForm/NewChatroomForm';
 
-const db = firebase.firestore();
 
 class Sidebar extends Component {
   constructor() {
@@ -12,7 +11,6 @@ class Sidebar extends Component {
       newChatroomFormVisible: false,
       error: null,
       chatrooms: [],
-      activeChatroom: null
     };
   }
 
@@ -70,7 +68,7 @@ class Sidebar extends Component {
         {this.state.chatrooms.length > 0 && (
           this.state.chatrooms.map((chatroomData) => {
             return (
-              <div className="chatroom-thumbnail" key={chatroomData.docId}>
+              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroom-thumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
                 <h3>{chatroomData.name}</h3>
               </div>
             )
