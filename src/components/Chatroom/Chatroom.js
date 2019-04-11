@@ -68,6 +68,8 @@ class Chatroom extends Component {
     const { docId } = this.props.activeChatroomData;
     const messageRef = db.collection('chatrooms').doc(docId).collection('messages').doc();
 
+    const privateMessageRef = db.collection('privateRooms').doc(docId).collection('messages').doc();
+
     const message = {
       authorName: this.props.user.displayName,
       authorUID: this.props.user.uid,
@@ -77,10 +79,14 @@ class Chatroom extends Component {
     }
 
     messageRef.set(message);
+
+    if(this.props.activeChatroomData.isPrivate) {
+      privateMessageRef.set(message);
+    }
+
     this.setState({
       draftedMessage: ''
     })
-
   }
 
   render() {

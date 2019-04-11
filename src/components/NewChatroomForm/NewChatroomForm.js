@@ -22,14 +22,24 @@ class NewChatroomForm extends Component {
       chatroomName: e.target.value
     })
   }
+
+  setRoomToPrivate = (e) => {
+    this.setState({
+      isPrivate: e.target.checked
+    })
+  }
+  
   render() {
     return (
-      <form onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName)}>
+      <form onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName, this.state.isPrivate || false)}>
         <label htmlFor="chatroomName">Chatroom name:</label>
         <input onChange={this.handleChange} id="chatroomName" name="chatroomName" type="text"/>
         {this.state.error &&
           <p class="user-feedback user-feedback-error">{this.state.error}</p>
         }
+
+        <label htmlFor="isPrivate">Private</label>
+        <input onChange={this.setRoomToPrivate} type="checkbox" id="isPrivate" name="isPrivate"/>
         <button>Create room</button>
       </form>
     )

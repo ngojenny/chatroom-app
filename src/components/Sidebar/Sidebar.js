@@ -10,30 +10,45 @@ class Sidebar extends Component {
     this.state = {
       newChatroomFormVisible: false,
       error: null,
-      chatrooms: [],
+      publicChatrooms: [],
+      privateChatrooms: []
     };
   }
 
   componentDidMount() {
-
-    db.collection('chatrooms').orderBy('created', 'desc').onSnapshot(querySnapshot => {
+    //update state with all public chatrooms
+    db.collection('chatrooms').where('isPrivate', '==', false).orderBy('created', 'desc').onSnapshot(querySnapshot => {
       const chatroomsFromDatabaseArray = [];
-
       querySnapshot.forEach(doc => {
         chatroomsFromDatabaseArray.push(doc.data());
       });
 
       this.setState({
-        chatrooms: chatroomsFromDatabaseArray
+        publicChatrooms: chatroomsFromDatabaseArray
+      });
+    });
+
+    // update stuate with all private chatrooms
+    db.collection('privateRooms').where('admin', '==', this.props.user.uid).orderBy('created', 'desc').onSnapshot(querySnapshot => {
+      const chatroomsFromDatabaseArray = [];
+      querySnapshot.forEach(doc => {
+        chatroomsFromDatabaseArray.push(doc.data());
+      });
+
+      this.setState({
+        privateChatrooms: chatroomsFromDatabaseArray
       });
     });
 
   }
 
-  createChatroomInDatabase = (e, chatroomName) => {
+  createChatroomInDatabase = (e, chatroomName, isPrivate) => {
     //called from <NewChatroomForm /> child component
     e.preventDefault();
+    console.log('what is isPrivate', isPrivate);
     const chatroomRef = db.collection('chatrooms').doc();
+    const privateRoomsRef = db.collection('privateRooms').doc();
+    const userRef = db.collection('users').doc(this.props.user.uid);
 
     const trimmedChatroomName = chatroomName.trim();
     if (trimmedChatroomName.length > 0) {
@@ -42,8 +57,22 @@ class Sidebar extends Component {
         admin: this.props.user.uid,
         name: chatroomName,
         docId: chatroomRef.id,
-        created: firebase.firestore.Timestamp.fromDate(new Date())
+        created: firebase.firestore.Timestamp.fromDate(new Date()),
+        isPrivate: isPrivate
       });
+      // if the chatroom is private, add it to both the user doc and the privateRooms collection
+      if(isPrivate) {
+        privateRoomsRef.set({
+          admin: this.props.user.uid,
+          name: chatroomName,
+          docId: chatroomRef.id,
+          created: firebase.firestore.Timestamp.fromDate(new Date()),
+        })
+        userRef.update({
+          privateRooms: firebase.firestore.FieldValue.arrayUnion(chatroomRef.id)
+        })
+      }
+      
       //hide <NewChatroomForm />
       this.setState({
         newChatroomFormVisible: false
@@ -65,8 +94,19 @@ class Sidebar extends Component {
     return (
       <div className="sidebar">
         <button onClick={this.showNewChatroomForm}>New room</button>
-        {this.state.chatrooms.length > 0 && (
-          this.state.chatrooms.map((chatroomData) => {
+        PUBLIC
+        {this.state.publicChatrooms.length > 0 && (
+          this.state.publicChatrooms.map((chatroomData) => {
+            return (
+              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroom-thumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
+                <h3>{chatroomData.name}</h3>
+              </div>
+            )
+          })
+        )}
+        HERE ARE THE PRIVATE ONES
+        {this.state.privateChatrooms.length > 0 && (
+          this.state.privateChatrooms.map((chatroomData) => {
             return (
               <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroom-thumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
                 <h3>{chatroomData.name}</h3>

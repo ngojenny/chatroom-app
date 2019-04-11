@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import firebase from './firebase';
+import firebase, { db } from './firebase';
 import AuthView from './components/AuthView/AuthView';
 import Header from './components/Header/Header';
 
@@ -28,6 +28,23 @@ class App extends Component {
         const user = result.user;
         this.setState({
           user
+        })
+
+        const userRef = db.collection('users').doc(user.uid);
+
+        userRef.get().then((doc) => {
+          if(doc.exists) {
+            console.log('it exists!', doc.data());
+          } else {
+            console.log('doesnt exists, gonna make a new one');
+            userRef.set({
+              name: user.displayName,
+              email: user.email,
+              userUID: user.uid,
+              created: firebase.firestore.Timestamp.fromDate(new Date()),
+              privateRooms: [],
+            })
+          }
         })
       })
   }
