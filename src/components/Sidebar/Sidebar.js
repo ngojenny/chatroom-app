@@ -30,18 +30,6 @@ class Sidebar extends Component {
 
   }
 
-  // componentWillUnmount() {
-  //   console.log('unmount before logging out');
-  //   this.detachFirebaseListeners();
-  // }
-
-  // detachFirebaseListeners = () => {
-  //   const unsubscribe = db.collection('chatrooms').onSnapshot((querySnapshot) => {
-  //   });
-  //   console.log('unsubscribe Sidebar', unsubscribe);
-  //   unsubscribe();
-  // }
-
   createChatroomInDatabase = (e, chatroomName) => {
     //called from <NewChatroomForm /> child component
     e.preventDefault();

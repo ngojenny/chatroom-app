@@ -30,7 +30,6 @@ class Chatroom extends Component {
 
   componentWillUnmount() {
     this._isMounted = false;
-    console.log('unmount before logging out');
     this.detachFirebaseListeners();
   }
 
@@ -78,12 +77,10 @@ class Chatroom extends Component {
     }
 
     messageRef.set(message);
+    this.setState({
+      draftedMessage: ''
+    })
 
-    if(this._isMounted) {
-      this.setState({
-        draftedMessage: ''
-      })
-    }
   }
 
   render() {
