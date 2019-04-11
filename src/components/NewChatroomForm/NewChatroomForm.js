@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, Fragment} from 'react';
 
 class NewChatroomForm extends Component {
   constructor() {
@@ -28,7 +28,7 @@ class NewChatroomForm extends Component {
       isPrivate: e.target.checked
     })
   }
-  
+
   render() {
     return (
       <form onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName, this.state.isPrivate || false)}>
@@ -40,6 +40,12 @@ class NewChatroomForm extends Component {
 
         <label htmlFor="isPrivate">Private</label>
         <input onChange={this.setRoomToPrivate} type="checkbox" id="isPrivate" name="isPrivate"/>
+        {this.state.isPrivate && 
+          <Fragment>
+            <label htmlFor="chatroom-members">Invite chatroom members:</label>
+            <input type="text" id="chatroom-members" name="chatroom-members" />
+          </Fragment>
+        }
         <button>Create room</button>
       </form>
     )
