@@ -17,22 +17,37 @@ class Chatroom extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log(prevProps, this.props);
     if(prevProps.activeChatroomData.docId !== this.props.activeChatroomData.docId) {
+      console.log('HIT IT', prevProps, this.props);
       this.setState({
         chatroomData: this.props.activeChatroomData
       })
+      this.getAllMessages();
     }
   }
 
+  componentWillUnmount() {
+    console.log('unmount before logging out');
+    this.detachFirebaseListeners();
+  }
+
+  detachFirebaseListeners = () => {
+    const { docId } = this.props.activeChatroomData;
+    const unsubscribe = db.collection('chatrooms').doc(docId).collection('messages').onSnapshot((querySnapshot) => {
+      
+    });
+    console.log('unsubscribe Chatroom', unsubscribe);
+    unsubscribe();
+  }
+
   getAllMessages = () => {
+    console.log('getting all the messages');
     const { docId } = this.props.activeChatroomData;
     const allMessagesRef = db.collection('chatrooms').doc(docId).collection('messages');
     
     allMessagesRef.orderBy('created', 'asc').onSnapshot((querySnapshot) => {
       const messagesFromDatabaseArray = [];
       querySnapshot.forEach((doc) => {
-        console.log('get all', doc.data())
         messagesFromDatabaseArray.push(doc.data());
       })
 
@@ -51,6 +66,7 @@ class Chatroom extends Component {
   saveMessageInDatabase = (e) => {
     e.preventDefault();
     const { docId } = this.props.activeChatroomData;
+    console.log('docId', docId);
     const messageRef = db.collection('chatrooms').doc(docId).collection('messages').doc();
 
     const message = {
@@ -61,6 +77,7 @@ class Chatroom extends Component {
       messageId: messageRef.id
     }
     messageRef.set(message);
+    console.log('about to set it');
     this.setState({
       draftedMessage: ''
     })

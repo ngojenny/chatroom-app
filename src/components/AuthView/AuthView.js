@@ -22,6 +22,18 @@ class AuthView extends Component {
     }
   }
 
+  componentWillUnmount() {
+    console.log('unmount before logging out');
+    this.detachFirebaseListeners();
+  }
+
+  detachFirebaseListeners = () => {
+    const unsubscribe = db.collection('chatrooms').onSnapshot((querySnapshot) => {
+    });
+    console.log('unsubscribe AuthView', unsubscribe);
+    unsubscribe();
+  }
+
   showNewestRoom = () => {
     const chatroomRef = db.collection('chatrooms')
       chatroomRef.orderBy('created', 'desc').limit(1).get().then((querySnapshot) => {

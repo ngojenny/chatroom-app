@@ -23,7 +23,6 @@ class App extends Component {
   }
 
   login = () => {
-    console.log('logged in');
     auth.signInWithPopup(provider)
       .then((result) => {
         const user = result.user;
@@ -34,7 +33,6 @@ class App extends Component {
   }
 
   logout = () => {
-    console.log('log out');
     this.setState({
       user: null
     })
