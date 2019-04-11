@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import firebase, { db } from '../../firebase';
 
 class Chatroom extends Component {
+  _isMounted = false;
+  
   constructor(props) {
     super(props);
     this.state = {
@@ -13,12 +15,12 @@ class Chatroom extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.getAllMessages();
   }
 
   componentDidUpdate(prevProps) {
     if(prevProps.activeChatroomData.docId !== this.props.activeChatroomData.docId) {
-      console.log('HIT IT', prevProps, this.props);
       this.setState({
         chatroomData: this.props.activeChatroomData
       })
@@ -27,6 +29,7 @@ class Chatroom extends Component {
   }
 
   componentWillUnmount() {
+    this._isMounted = false;
     console.log('unmount before logging out');
     this.detachFirebaseListeners();
   }
@@ -34,14 +37,11 @@ class Chatroom extends Component {
   detachFirebaseListeners = () => {
     const { docId } = this.props.activeChatroomData;
     const unsubscribe = db.collection('chatrooms').doc(docId).collection('messages').onSnapshot((querySnapshot) => {
-      
     });
-    console.log('unsubscribe Chatroom', unsubscribe);
     unsubscribe();
   }
 
   getAllMessages = () => {
-    console.log('getting all the messages');
     const { docId } = this.props.activeChatroomData;
     const allMessagesRef = db.collection('chatrooms').doc(docId).collection('messages');
     
@@ -50,10 +50,11 @@ class Chatroom extends Component {
       querySnapshot.forEach((doc) => {
         messagesFromDatabaseArray.push(doc.data());
       })
-
-      this.setState({
-        allMessages: messagesFromDatabaseArray
-      });
+      if(this._isMounted){
+        this.setState({
+          allMessages: messagesFromDatabaseArray
+        });
+      }
     });
   }
 
@@ -66,7 +67,6 @@ class Chatroom extends Component {
   saveMessageInDatabase = (e) => {
     e.preventDefault();
     const { docId } = this.props.activeChatroomData;
-    console.log('docId', docId);
     const messageRef = db.collection('chatrooms').doc(docId).collection('messages').doc();
 
     const message = {
@@ -76,11 +76,14 @@ class Chatroom extends Component {
       message: this.state.draftedMessage,
       messageId: messageRef.id
     }
+
     messageRef.set(message);
-    console.log('about to set it');
-    this.setState({
-      draftedMessage: ''
-    })
+
+    if(this._isMounted) {
+      this.setState({
+        draftedMessage: ''
+      })
+    }
   }
 
   render() {

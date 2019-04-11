@@ -23,14 +23,12 @@ class AuthView extends Component {
   }
 
   componentWillUnmount() {
-    console.log('unmount before logging out');
     this.detachFirebaseListeners();
   }
 
   detachFirebaseListeners = () => {
     const unsubscribe = db.collection('chatrooms').onSnapshot((querySnapshot) => {
     });
-    console.log('unsubscribe AuthView', unsubscribe);
     unsubscribe();
   }
 
