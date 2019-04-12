@@ -65,6 +65,7 @@ class Chatroom extends Component {
 
   saveMessageInDatabase = (e) => {
     e.preventDefault();
+    console.log('saving message');
     const { docId } = this.props.activeChatroomData;
     const messageRef = db.collection('chatrooms').doc(docId).collection('messages').doc();
 
@@ -91,11 +92,11 @@ class Chatroom extends Component {
 
   render() {
     return (
-      <div className="chatroom-window">
-        <div className="chatroom-window-messages">
+      <div className="chatroomWindow">
+        <div className="chatroomWindowMessages">
           {this.state.allMessages.map((doc) => {
             return(
-              <div className="individual-message" key={doc.messageId}>
+              <div className="individualMessage" key={doc.messageId}>
                 <span>{doc.authorName}</span>
                 <p>{doc.message}</p>
               </div>

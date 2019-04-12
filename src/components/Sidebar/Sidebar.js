@@ -98,7 +98,7 @@ class Sidebar extends Component {
         {this.state.publicChatrooms.length > 0 && (
           this.state.publicChatrooms.map((chatroomData) => {
             return (
-              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroom-thumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
+              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroomThumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
                 <h3>{chatroomData.name}</h3>
               </div>
             )
@@ -108,7 +108,7 @@ class Sidebar extends Component {
         {this.state.privateChatrooms.length > 0 && (
           this.state.privateChatrooms.map((chatroomData) => {
             return (
-              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroom-thumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
+              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroomThumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
                 <h3>{chatroomData.name}</h3>
               </div>
             )
