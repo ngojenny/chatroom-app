@@ -42,13 +42,12 @@ class Sidebar extends Component {
 
   }
 
-  createChatroomInDatabase = (e, chatroomName, isPrivate) => {
+  createChatroomInDatabase = (e, chatroomName, isPrivate, addedChatroomMembers) => {
     //called from <NewChatroomForm /> child component
     e.preventDefault();
-    console.log('what is isPrivate', isPrivate);
     const chatroomRef = db.collection('chatrooms').doc();
     const privateRoomsRef = db.collection('privateRooms').doc();
-    const userRef = db.collection('users').doc(this.props.user.uid);
+    const usersRef = db.collection('users');
 
     const trimmedChatroomName = chatroomName.trim();
     if (trimmedChatroomName.length > 0) {
@@ -61,18 +60,53 @@ class Sidebar extends Component {
         isPrivate: isPrivate
       });
       // if the chatroom is private, add it to both the user doc and the privateRooms collection
-      if(isPrivate) {
-        privateRoomsRef.set({
-          admin: this.props.user.uid,
-          name: chatroomName,
-          docId: chatroomRef.id,
-          created: firebase.firestore.Timestamp.fromDate(new Date()),
+      if(addedChatroomMembers.length > 0 || isPrivate) {
+        //TO REVISIT: probably not the best way to get all users uid
+        // do we even need uid - emails are also unique
+        const userQueries = addedChatroomMembers.map((email) => {
+          return usersRef.where('email', '==', email);
         })
-        userRef.update({
-          privateRooms: firebase.firestore.FieldValue.arrayUnion(chatroomRef.id)
+
+        const userQueriesPromises = userQueries.map((query) => {
+          return query.get();
+        });
+
+        Promise.all(userQueriesPromises).then((values) => {
+          const docsSnapshot = values.map((val) => {
+            return val.docs
+          });
+
+          const flattenDocsSnapshot = [].concat(...docsSnapshot)
+
+          const usersUIDs = flattenDocsSnapshot.map((doc) => {
+            if(doc.exists) {
+              const docData = doc.data();
+              return docData.userUID;
+            }
+          })
+
+          if(usersUIDs.indexOf(this.props.user.uid) < 0) {
+            usersUIDs.push(this.props.user.uid);
+          }
+          
+
+          privateRoomsRef.set({
+            admin: this.props.user.uid,
+            name: chatroomName,
+            docId: chatroomRef.id,
+            created: firebase.firestore.Timestamp.fromDate(new Date()),
+            users: usersUIDs,
+          })
+
+          usersUIDs.forEach((uid) => {
+            usersRef.doc(uid).update({
+              privateRooms: firebase.firestore.FieldValue.arrayUnion(chatroomRef.id)
+            })
+          })
+
         })
       }
-      
+          
       //hide <NewChatroomForm />
       this.setState({
         newChatroomFormVisible: false

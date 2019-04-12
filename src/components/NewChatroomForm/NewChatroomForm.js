@@ -87,7 +87,7 @@ class NewChatroomForm extends Component {
 
   render() {
     return (
-      <form onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName, this.state.isPrivate || false)}>
+      <form onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName, this.state.isPrivate || false, this.state.addedChatroomMembers)}>
         <label htmlFor="chatroomName">Chatroom name:</label>
         <input onChange={this.handleChange} id="chatroomName" name="chatroomName" type="text"/>
         {this.state.error &&
@@ -107,7 +107,7 @@ class NewChatroomForm extends Component {
             {this.state.addedChatroomMembers.length > 0 && 
               this.state.addedChatroomMembers.map((email) => {
                 return (
-                  <span className="memberEmails">{email}</span>
+                  <span key={email} className="memberEmails">{email}</span>
                 )
               })
             }
