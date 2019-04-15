@@ -29,7 +29,7 @@ class Sidebar extends Component {
     });
 
     // update stuate with all private chatrooms
-    db.collection('privateRooms').where('admin', '==', this.props.user.uid).orderBy('created', 'desc').onSnapshot(querySnapshot => {
+    db.collection('privateRooms').where('users', 'array-contains', this.props.user.uid).orderBy('created', 'desc').onSnapshot(querySnapshot => {
       const chatroomsFromDatabaseArray = [];
       querySnapshot.forEach(doc => {
         chatroomsFromDatabaseArray.push(doc.data());
@@ -46,7 +46,7 @@ class Sidebar extends Component {
     //called from <NewChatroomForm /> child component
     e.preventDefault();
     const chatroomRef = db.collection('chatrooms').doc();
-    const privateRoomsRef = db.collection('privateRooms').doc();
+    const privateRoomsRef = db.collection('privateRooms').doc(chatroomRef.id);
     const usersRef = db.collection('users');
 
     const trimmedChatroomName = chatroomName.trim();
