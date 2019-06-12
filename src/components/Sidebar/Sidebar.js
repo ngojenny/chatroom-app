@@ -14,13 +14,18 @@ class Sidebar extends Component {
       newChatroomFormVisible: false,
       error: null,
       publicChatrooms: [],
-      privateChatrooms: []
+      privateChatrooms: [],
+      activeTab: 'public',
     };
   }
 
   componentDidMount() {
     this._isMounted = true;
     this.getAllChatrooms();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   getAllChatrooms = () => {
@@ -127,9 +132,13 @@ class Sidebar extends Component {
     }
   }
 
-  componentWillUnmount() {
-    this._isMounted = false;
+  setActiveTab = () => {
+    this.setState({
+      activeTab: this.state.activeTab === 'public' ? 'private' : 'public'
+    })
   }
+
+
 
   showNewChatroomForm = () => {
     this.setState({
@@ -140,9 +149,12 @@ class Sidebar extends Component {
   render() {
     return (
       <div className="sidebar">
+        <h2>Chatroom</h2>
         <button className="btn btn-secondary" onClick={this.showNewChatroomForm}>New room</button>
-        PUBLIC
-        {this.state.publicChatrooms.length > 0 && (
+        <button onClick={this.setActiveTab}>Public Chats</button>
+        <button onClick={this.setActiveTab}>Private Chats</button>
+        
+        {(this.state.publicChatrooms.length > 0 && this.state.activeTab === 'public') && (
           this.state.publicChatrooms.map((chatroomData) => {
             return (
               <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroomThumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
@@ -151,8 +163,7 @@ class Sidebar extends Component {
             )
           })
         )}
-        HERE ARE THE PRIVATE ONES
-        {this.state.privateChatrooms.length > 0 && (
+        {(this.state.privateChatrooms.length > 0 && this.state.activeTab === 'private') && (
           this.state.privateChatrooms.map((chatroomData) => {
             return (
               <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroomThumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>

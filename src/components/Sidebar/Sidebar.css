@@ -1,5 +1,6 @@
 .sidebar {
   flex-basis: 370px;
+  border-right: 1px solid var(--shadowColor);
 }
 
 .chatroomThumbnail {

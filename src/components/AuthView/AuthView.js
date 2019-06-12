@@ -62,7 +62,7 @@ class AuthView extends Component {
   render() {
     return (
       <main className="card">
-        <Header text={'Chatrooms'} />
+        {/* <Header text={'Chatrooms'} /> */}
         <div className="authViewContainer">
           <Sidebar user={this.props.user} showActiveChatroom={this.showActiveChatroom} />
           {this.state.activeChatroomData &&
