@@ -3,6 +3,8 @@ import firebase, { db } from './firebase';
 import AuthView from './components/AuthView/AuthView';
 import Header from './components/Header/Header';
 
+import './App.css';
+
 const provider = new firebase.auth.GoogleAuthProvider();
 const auth = firebase.auth();
 
@@ -58,10 +60,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Header text={'AppTitle'}>
+        <Header text={'AppTitle'} mainHeader>
           {this.state.user ? 
-            <button onClick={this.logout}>Logout</button> : 
-            <button onClick={this.login}>Login</button>
+            <button className="btn btn-primary" onClick={this.logout}>Logout</button> : 
+            <button className="btn btn-primary" onClick={this.login}>Login</button>
           }
         </Header>
         {this.state.user &&

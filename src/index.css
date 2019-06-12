@@ -2,6 +2,10 @@ article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary
 .clearfix:after {visibility: hidden; display: block; font-size: 0; content: ''; clear: both; height: 0; }
 * { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
-body {
-  font-family: 'Roboto', sans-serif;
+:root {
+  --shadowColor: #CCC;
+  --accentColor: #33BA96;
+  --baseColor: #ffffff;
+  --textColor: #585757;
+  --secondaryColor: #f1f0f0;
 }

@@ -6,6 +6,7 @@ import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import Chatroom from '../Chatroom/Chatroom';
 
+import './AuthView.css';
 
 class AuthView extends Component {
   constructor() {
@@ -61,11 +62,13 @@ class AuthView extends Component {
   render() {
     return (
       <main className="card">
-        <Header text={'Chatroom'} />
-        <Sidebar user={this.props.user} showActiveChatroom={this.showActiveChatroom} />
-        {this.state.activeChatroomData &&
-          <Chatroom user={this.props.user} activeChatroomData={this.state.activeChatroomData} />
-        }
+        <Header text={'Chatrooms'} />
+        <div className="authViewContainer">
+          <Sidebar user={this.props.user} showActiveChatroom={this.showActiveChatroom} />
+          {this.state.activeChatroomData &&
+            <Chatroom user={this.props.user} activeChatroomData={this.state.activeChatroomData} />
+          }
+        </div>
       </main>
     )
   }

@@ -1,0 +1,4 @@
+.chatroomWindow {
+  background: var(--secondaryColor);
+  flex-grow: 1;
+}

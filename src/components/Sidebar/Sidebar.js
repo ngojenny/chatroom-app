@@ -3,8 +3,11 @@ import React, { Component } from 'react';
 import firebase, { db } from '../../firebase';
 import NewChatroomForm from '../NewChatroomForm/NewChatroomForm';
 
+import './Sidebar.css'
+
 
 class Sidebar extends Component {
+  _isMounted = false;
   constructor() {
     super();
     this.state = {
@@ -16,16 +19,22 @@ class Sidebar extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
+    this.getAllChatrooms();
+  }
+
+  getAllChatrooms = () => {
     //update state with all public chatrooms
     db.collection('chatrooms').where('isPrivate', '==', false).orderBy('created', 'desc').onSnapshot(querySnapshot => {
       const chatroomsFromDatabaseArray = [];
       querySnapshot.forEach(doc => {
         chatroomsFromDatabaseArray.push(doc.data());
       });
-
-      this.setState({
-        publicChatrooms: chatroomsFromDatabaseArray
-      });
+      if(this._isMounted) {
+        this.setState({
+          publicChatrooms: chatroomsFromDatabaseArray
+        });
+      }
     });
 
     // update stuate with all private chatrooms
@@ -34,12 +43,12 @@ class Sidebar extends Component {
       querySnapshot.forEach(doc => {
         chatroomsFromDatabaseArray.push(doc.data());
       });
-
-      this.setState({
-        privateChatrooms: chatroomsFromDatabaseArray
-      });
+      if(this._isMounted){
+        this.setState({
+          privateChatrooms: chatroomsFromDatabaseArray
+        });
+      }
     });
-
   }
 
   createChatroomInDatabase = (e, chatroomName, isPrivate, addedChatroomMembers) => {
@@ -116,7 +125,11 @@ class Sidebar extends Component {
         error: 'Oopsy! Something went wrong, please try again'
       });
     }
-  };
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
 
   showNewChatroomForm = () => {
     this.setState({
@@ -127,7 +140,7 @@ class Sidebar extends Component {
   render() {
     return (
       <div className="sidebar">
-        <button onClick={this.showNewChatroomForm}>New room</button>
+        <button className="btn btn-secondary" onClick={this.showNewChatroomForm}>New room</button>
         PUBLIC
         {this.state.publicChatrooms.length > 0 && (
           this.state.publicChatrooms.map((chatroomData) => {

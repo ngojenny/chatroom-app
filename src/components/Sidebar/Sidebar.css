@@ -1,0 +1,8 @@
+.sidebar {
+  flex-basis: 370px;
+}
+
+.chatroomThumbnail {
+  border-bottom: 1px solid var(--shadowColor);
+  cursor: pointer;
+}

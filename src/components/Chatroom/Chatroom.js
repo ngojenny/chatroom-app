@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import firebase, { db } from '../../firebase';
+import Message from '../Message/Message.js';
+import './Chatroom.css';
 
 class Chatroom extends Component {
   _isMounted = false;
@@ -96,17 +98,14 @@ class Chatroom extends Component {
         <div className="chatroomWindowMessages">
           {this.state.allMessages.map((doc) => {
             return(
-              <div className="individualMessage" key={doc.messageId}>
-                <span>{doc.authorName}</span>
-                <p>{doc.message}</p>
-              </div>
+              <Message key={doc.messageId} authorName={doc.authorName} msg={doc.message} />
             )
           })}
         </div>
         <form onSubmit={this.saveMessageInDatabase}>
           <label htmlFor="message">Enter message:</label>
           <textarea onChange={this.handleChange} name="message" id="message" value={this.state.draftedMessage}></textarea>
-          <button>Send</button>
+          <button className="btn btn-secondary">Send</button>
         </form>
       </div>
     )

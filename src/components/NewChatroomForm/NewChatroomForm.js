@@ -3,6 +3,7 @@ import React, {Component, Fragment} from 'react';
 import { db } from '../../firebase';
 
 class NewChatroomForm extends Component {
+  _isMounted = false;
   constructor() {
     super();
     this.state = {
@@ -17,15 +18,19 @@ class NewChatroomForm extends Component {
 
   componentDidMount() {
     // grab all emails from the database and populate this.state.allChatroomMembers
-    const usersRef = db.collection('users').onSnapshot((querySnapshot) => {
+    this._isMounted = true;
+
+    db.collection('users').onSnapshot((querySnapshot) => {
       const allEmails = [];
       querySnapshot.forEach((doc) => {
         const docData = doc.data();
         allEmails.push(docData.email);
       })
-      this.setState({
-        allChatroomMemberEmailFromDB: allEmails,
-      })
+      if(this._isMounted) {
+        this.setState({
+          allChatroomMemberEmailFromDB: allEmails,
+        })
+      }
     })
   }
 
