@@ -3,7 +3,7 @@ import './Message.css';
 
 const Message = (props) => {
   return (
-    <div className="individualMessage">
+    <div className={props.authorUID === props.userUID ? "individualMessage currentUserMessage" : "individualMessage"}>
       <span>{props.authorName}</span>
       <p>{props.msg}</p>
     </div>

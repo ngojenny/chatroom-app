@@ -98,7 +98,7 @@ class Chatroom extends Component {
         <div className="chatroomWindowMessages">
           {this.state.allMessages.map((doc) => {
             return(
-              <Message key={doc.messageId} authorName={doc.authorName} msg={doc.message} />
+              <Message key={doc.messageId} authorName={doc.authorName} authorUID={doc.authorUID} userUID={this.props.user.uid} msg={doc.message} />
             )
           })}
         </div>

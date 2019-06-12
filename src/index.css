@@ -9,3 +9,11 @@ article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary
   --textColor: #585757;
   --secondaryColor: #f1f0f0;
 }
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+}
