@@ -1,9 +1,27 @@
 .sidebar {
   flex-basis: 370px;
   border-right: 1px solid var(--shadowColor);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .chatroomThumbnail {
   border-bottom: 1px solid var(--shadowColor);
   cursor: pointer;
+  width: 100%;
+}
+
+.sidebar-tabs {
+  padding: 20px 0;
+}
+
+.sidebar-tabs .tab {
+  background: var(--baseColor);
+  border: none;
+  padding: 10px;
+}
+
+.sidebar-tabs .tab-active {
+  border-bottom: 2px solid var(--accentColor);
 }

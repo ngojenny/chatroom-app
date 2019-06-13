@@ -151,8 +151,10 @@ class Sidebar extends Component {
       <div className="sidebar">
         <h2>Chatroom</h2>
         <button className="btn btn-secondary" onClick={this.showNewChatroomForm}>New room</button>
-        <button onClick={this.setActiveTab}>Public Chats</button>
-        <button onClick={this.setActiveTab}>Private Chats</button>
+        <div className="sidebar-tabs">
+          <button className={this.state.activeTab === 'public' ? "tab tab-active" : "tab"} onClick={this.setActiveTab}>Public Chats</button>
+          <button className={this.state.activeTab === 'private' ? "tab tab-active" : "tab"}  onClick={this.setActiveTab}>Private Chats</button>
+        </div>
         
         {(this.state.publicChatrooms.length > 0 && this.state.activeTab === 'public') && (
           this.state.publicChatrooms.map((chatroomData) => {
