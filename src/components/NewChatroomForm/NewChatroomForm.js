@@ -2,6 +2,8 @@ import React, {Component, Fragment} from 'react';
 
 import { db } from '../../firebase';
 
+import './NewChatroomForm.css'
+
 class NewChatroomForm extends Component {
   _isMounted = false;
   constructor() {
@@ -92,34 +94,39 @@ class NewChatroomForm extends Component {
 
   render() {
     return (
-      <form onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName, this.state.isPrivate || false, this.state.addedChatroomMembers)}>
-        <label htmlFor="chatroomName">Chatroom name:</label>
-        <input onChange={this.handleChange} id="chatroomName" name="chatroomName" type="text"/>
-        {this.state.error &&
-          <p className="userFeedback userFeedbackError">{this.state.error}</p>
-        }
+      <div className="modal">
+        <form className="newChatroomForm" onSubmit={(e) => this.props.createChatroomInDatabase(e,this.state.chatroomName, this.state.isPrivate || false, this.state.addedChatroomMembers)}>
+          <label htmlFor="chatroomName">Chatroom name:</label>
+          <input onChange={this.handleChange} id="chatroomName" name="chatroomName" type="text"/>
+          {this.state.error &&
+            <p className="userFeedback userFeedbackError">{this.state.error}</p>
+          }
 
-        <label htmlFor="isPrivate">Private</label>
-        <input onChange={this.setRoomToPrivate} type="checkbox" id="isPrivate" name="isPrivate"/>
-        {this.state.isPrivate && 
-          <Fragment>
-            <label htmlFor="chatroomMemberEmail"> Add members:</label>
-            <input onChange={this.handleChange} type="text" id="chatroomMemberEmail" name="chatroomMemberEmail" value={this.state.chatroomMemberEmail}/>
-            {this.state.chatroomMemberError && 
-              <p className="userFeedback userFeedbackError">{this.state.chatroomMemberError}</p>
-            }
-            <button type="button" onClick={this.addMembersToChatroom}>Add</button>
-            {this.state.addedChatroomMembers.length > 0 && 
-              this.state.addedChatroomMembers.map((email) => {
-                return (
-                  <span key={email} className="memberEmails">{email}</span>
-                )
-              })
-            }
-          </Fragment>
-        }
-        <button type="submit">Create room</button>
-      </form>
+          <label htmlFor="isPrivate">Private</label>
+          <input onChange={this.setRoomToPrivate} type="checkbox" id="isPrivate" name="isPrivate"/>
+          {this.state.isPrivate && 
+            <Fragment>
+              <label htmlFor="chatroomMemberEmail"> Add members:</label>
+              <input onChange={this.handleChange} type="text" id="chatroomMemberEmail" name="chatroomMemberEmail" value={this.state.chatroomMemberEmail}/>
+              {this.state.chatroomMemberError && 
+                <p className="userFeedback userFeedbackError">{this.state.chatroomMemberError}</p>
+              }
+              <button type="button" onClick={this.addMembersToChatroom}>Add</button>
+              {this.state.addedChatroomMembers.length > 0 && 
+                this.state.addedChatroomMembers.map((email) => {
+                  return (
+                    <span key={email} className="memberEmails">{email}</span>
+                  )
+                })
+              }
+            </Fragment>
+          }
+          <div className="newChatroomFormButtonContainer">
+            <button className="btn btn-primary" type="submit">Create room</button>
+            <button className="btn btn-secondary" type="button" onClick={this.props.toggleForm}>Cancel</button>
+          </div>
+        </form>
+      </div>
     )
   }
 }

@@ -1,4 +1,5 @@
 .authViewContainer {
   display: flex;
   min-height: calc(100vh - 78px);
+  position: relative;
 }

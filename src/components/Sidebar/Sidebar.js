@@ -142,7 +142,7 @@ class Sidebar extends Component {
 
   showNewChatroomForm = () => {
     this.setState({
-      newChatroomFormVisible: true
+      newChatroomFormVisible: !this.state.newChatroomFormVisible
     });
   }
 
@@ -180,6 +180,7 @@ class Sidebar extends Component {
           <NewChatroomForm
             createChatroomInDatabase={this.createChatroomInDatabase}
             error={this.state.error}
+            toggleForm={this.showNewChatroomForm}
           />
         )}
       </div>

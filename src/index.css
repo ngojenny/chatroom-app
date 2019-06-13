@@ -8,6 +8,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,nav,section,summary
   --baseColor: #ffffff;
   --textColor: #585757;
   --secondaryColor: #f1f0f0;
+  --modalBackground: rgba(88, 87, 87, 0.8);
 }
 
 html {
