@@ -101,11 +101,12 @@ class Sidebar extends Component {
           });
 
           const flattenDocsSnapshot = [].concat(...docsSnapshot);
+          const usersUIDs = [];
 
-          const usersUIDs = flattenDocsSnapshot.map(doc => {
+          flattenDocsSnapshot.forEach(doc => {
             if (doc.exists) {
               const docData = doc.data();
-              return docData.userUID;
+              usersUIDs.push(docData.userUID);
             }
           });
 
