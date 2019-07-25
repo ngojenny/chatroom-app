@@ -5,6 +5,7 @@
   height: 100%;
   display: flex;
   z-index: 20;
+  left: 0;
 }
 
 .newChatroomForm {
@@ -21,11 +22,32 @@
   display: block;
 }
 
+.newChatroomForm label:nth-of-type(2) {
+  display: inline-block;
+  margin-right: 10px;
+}
+
 .newChatroomForm button {
   margin: 0 auto;
 }
 
-.newChatroomForm input[type="text"] {
+.newChatroomForm .btn-add {
+  background: var(--accentColor);
+  border-radius: 50%;
+  color: white;
+  font-size: 2.7rem;
+  height: 30px;
+  width: 30px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  line-height: 0;
+  margin-left: 15px;
+}
+
+.newChatroomForm input[type='text'] {
   display: block;
   width: 100%;
   padding: 5px;
@@ -38,4 +60,37 @@
 .newChatroomFormButtonContainer {
   display: flex;
   align-items: center;
+}
+
+.chatroomMemberAdditionContainer {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.chatroomMemberAdditionContainer input {
+  margin-bottom: 0;
+  margin-right: 20px;
+}
+
+.userFeedback {
+  font-size: 1.4rem;
+  color: var(--error);
+}
+.memberInput {
+  flex-grow: 1;
+}
+
+.membersEmailsContainer {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.memberEmail {
+  background: var(--secondaryColor);
+  display: inline-block;
+  padding: 2px 5px;
+  margin: 2px;
 }

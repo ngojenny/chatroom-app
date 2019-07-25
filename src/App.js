@@ -61,9 +61,14 @@ class App extends Component {
     return (
       <div className="App">
         <Header text={'AppTitle'} mainHeader>
-          {this.state.user ? 
-            <button className="btn btn-primary" onClick={this.logout}>Logout</button> : 
+          {this.state.user ? (
+            <div>
+              <span className="greeting">Hi, {this.state.user.displayName}!</span>
+              <button className="btn btn-primary" onClick={this.logout}>Logout</button>
+            </div>
+            ): ( 
             <button className="btn btn-primary" onClick={this.login}>Login</button>
+            )
           }
         </Header>
         {this.state.user &&

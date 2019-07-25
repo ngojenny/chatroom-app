@@ -3,8 +3,7 @@ import React, { Component } from 'react';
 import firebase, { db } from '../../firebase';
 import NewChatroomForm from '../NewChatroomForm/NewChatroomForm';
 
-import './Sidebar.css'
-
+import './Sidebar.css';
 
 class Sidebar extends Component {
   _isMounted = false;
@@ -15,7 +14,7 @@ class Sidebar extends Component {
       error: null,
       publicChatrooms: [],
       privateChatrooms: [],
-      activeTab: 'public',
+      activeTab: 'public'
     };
   }
 
@@ -30,33 +29,44 @@ class Sidebar extends Component {
 
   getAllChatrooms = () => {
     //update state with all public chatrooms
-    db.collection('chatrooms').where('isPrivate', '==', false).orderBy('created', 'desc').onSnapshot(querySnapshot => {
-      const chatroomsFromDatabaseArray = [];
-      querySnapshot.forEach(doc => {
-        chatroomsFromDatabaseArray.push(doc.data());
-      });
-      if(this._isMounted) {
-        this.setState({
-          publicChatrooms: chatroomsFromDatabaseArray
+    db.collection('chatrooms')
+      .where('isPrivate', '==', false)
+      .orderBy('created', 'desc')
+      .onSnapshot(querySnapshot => {
+        const chatroomsFromDatabaseArray = [];
+        querySnapshot.forEach(doc => {
+          chatroomsFromDatabaseArray.push(doc.data());
         });
-      }
-    });
+        if (this._isMounted) {
+          this.setState({
+            publicChatrooms: chatroomsFromDatabaseArray
+          });
+        }
+      });
 
     // update stuate with all private chatrooms
-    db.collection('privateRooms').where('users', 'array-contains', this.props.user.uid).orderBy('created', 'desc').onSnapshot(querySnapshot => {
-      const chatroomsFromDatabaseArray = [];
-      querySnapshot.forEach(doc => {
-        chatroomsFromDatabaseArray.push(doc.data());
-      });
-      if(this._isMounted){
-        this.setState({
-          privateChatrooms: chatroomsFromDatabaseArray
+    db.collection('privateRooms')
+      .where('users', 'array-contains', this.props.user.uid)
+      .orderBy('created', 'desc')
+      .onSnapshot(querySnapshot => {
+        const chatroomsFromDatabaseArray = [];
+        querySnapshot.forEach(doc => {
+          chatroomsFromDatabaseArray.push(doc.data());
         });
-      }
-    });
-  }
+        if (this._isMounted) {
+          this.setState({
+            privateChatrooms: chatroomsFromDatabaseArray
+          });
+        }
+      });
+  };
 
-  createChatroomInDatabase = (e, chatroomName, isPrivate, addedChatroomMembers) => {
+  createChatroomInDatabase = (
+    e,
+    chatroomName,
+    isPrivate,
+    addedChatroomMembers
+  ) => {
     //called from <NewChatroomForm /> child component
     e.preventDefault();
     const chatroomRef = db.collection('chatrooms').doc();
@@ -74,53 +84,53 @@ class Sidebar extends Component {
         isPrivate: isPrivate
       });
       // if the chatroom is private, add it to both the user doc and the privateRooms collection
-      if(addedChatroomMembers.length > 0 || isPrivate) {
+      if (addedChatroomMembers.length > 0 || isPrivate) {
         //TO REVISIT: probably not the best way to get all users uid
         // do we even need uid - emails are also unique
-        const userQueries = addedChatroomMembers.map((email) => {
+        const userQueries = addedChatroomMembers.map(email => {
           return usersRef.where('email', '==', email);
-        })
+        });
 
-        const userQueriesPromises = userQueries.map((query) => {
+        const userQueriesPromises = userQueries.map(query => {
           return query.get();
         });
 
-        Promise.all(userQueriesPromises).then((values) => {
-          const docsSnapshot = values.map((val) => {
-            return val.docs
+        Promise.all(userQueriesPromises).then(values => {
+          const docsSnapshot = values.map(val => {
+            return val.docs;
           });
 
-          const flattenDocsSnapshot = [].concat(...docsSnapshot)
+          const flattenDocsSnapshot = [].concat(...docsSnapshot);
 
-          const usersUIDs = flattenDocsSnapshot.map((doc) => {
-            if(doc.exists) {
+          const usersUIDs = flattenDocsSnapshot.map(doc => {
+            if (doc.exists) {
               const docData = doc.data();
               return docData.userUID;
             }
-          })
+          });
 
-          if(usersUIDs.indexOf(this.props.user.uid) < 0) {
+          if (usersUIDs.indexOf(this.props.user.uid) < 0) {
             usersUIDs.push(this.props.user.uid);
           }
-          
 
           privateRoomsRef.set({
             admin: this.props.user.uid,
             name: chatroomName,
             docId: chatroomRef.id,
             created: firebase.firestore.Timestamp.fromDate(new Date()),
-            users: usersUIDs,
-          })
+            users: usersUIDs
+          });
 
-          usersUIDs.forEach((uid) => {
+          usersUIDs.forEach(uid => {
             usersRef.doc(uid).update({
-              privateRooms: firebase.firestore.FieldValue.arrayUnion(chatroomRef.id)
-            })
-          })
-
-        })
+              privateRooms: firebase.firestore.FieldValue.arrayUnion(
+                chatroomRef.id
+              )
+            });
+          });
+        });
       }
-          
+
       //hide <NewChatroomForm />
       this.setState({
         newChatroomFormVisible: false
@@ -130,50 +140,81 @@ class Sidebar extends Component {
         error: 'Oopsy! Something went wrong, please try again'
       });
     }
-  }
+  };
 
   setActiveTab = () => {
     this.setState({
       activeTab: this.state.activeTab === 'public' ? 'private' : 'public'
-    })
-  }
-
-
+    });
+  };
 
   showNewChatroomForm = () => {
     this.setState({
       newChatroomFormVisible: !this.state.newChatroomFormVisible
     });
-  }
+  };
 
   render() {
     return (
       <div className="sidebar">
         <h2>Chatroom</h2>
-        <button className="btn btn-secondary" onClick={this.showNewChatroomForm}>New room</button>
+        <button
+          className="btn btn-secondary"
+          onClick={this.showNewChatroomForm}
+        >
+          New room
+        </button>
         <div className="sidebar-tabs">
-          <button className={this.state.activeTab === 'public' ? "tab tab-active" : "tab"} onClick={this.setActiveTab}>Public Chats</button>
-          <button className={this.state.activeTab === 'private' ? "tab tab-active" : "tab"}  onClick={this.setActiveTab}>Private Chats</button>
+          <button
+            className={
+              this.state.activeTab === 'public' ? 'tab tab-active' : 'tab'
+            }
+            onClick={this.setActiveTab}
+          >
+            Public Chats
+          </button>
+          <button
+            className={
+              this.state.activeTab === 'private' ? 'tab tab-active' : 'tab'
+            }
+            onClick={this.setActiveTab}
+          >
+            Private Chats
+          </button>
         </div>
-        
-        {(this.state.publicChatrooms.length > 0 && this.state.activeTab === 'public') && (
-          this.state.publicChatrooms.map((chatroomData) => {
+
+        {this.state.publicChatrooms.length > 0 &&
+          this.state.activeTab === 'public' &&
+          this.state.publicChatrooms.map(chatroomData => {
             return (
-              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroomThumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
+              <div
+                onClick={() =>
+                  this.props.showActiveChatroom(chatroomData.docId)
+                }
+                className="chatroomThumbnail"
+                key={chatroomData.docId}
+                data-name={chatroomData.docId}
+              >
                 <h3>{chatroomData.name}</h3>
               </div>
-            )
-          })
-        )}
-        {(this.state.privateChatrooms.length > 0 && this.state.activeTab === 'private') && (
-          this.state.privateChatrooms.map((chatroomData) => {
+            );
+          })}
+        {this.state.privateChatrooms.length > 0 &&
+          this.state.activeTab === 'private' &&
+          this.state.privateChatrooms.map(chatroomData => {
             return (
-              <div onClick={() => this.props.showActiveChatroom(chatroomData.docId)} className="chatroomThumbnail" key={chatroomData.docId} data-name={chatroomData.docId}>
+              <div
+                onClick={() =>
+                  this.props.showActiveChatroom(chatroomData.docId)
+                }
+                className="chatroomThumbnail"
+                key={chatroomData.docId}
+                data-name={chatroomData.docId}
+              >
                 <h3>{chatroomData.name}</h3>
               </div>
-            )
-          })
-        )}
+            );
+          })}
 
         {/*new chatroom form - toggled visibility*/}
         {this.state.newChatroomFormVisible && (

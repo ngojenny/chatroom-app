@@ -1,8 +1,7 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import { db } from '../../firebase';
 
-import Header from '../Header/Header';
 import Sidebar from '../Sidebar/Sidebar';
 import Chatroom from '../Chatroom/Chatroom';
 
@@ -12,12 +11,12 @@ class AuthView extends Component {
   constructor() {
     super();
     this.state = {
-      activeChatroomData: null,
-    }
+      activeChatroomData: null
+    };
   }
 
   componentDidMount() {
-    if(!this.state.chatroomData) {
+    if (!this.state.chatroomData) {
       this.showNewestRoom();
       return;
     }
@@ -28,49 +27,59 @@ class AuthView extends Component {
   }
 
   detachFirebaseListeners = () => {
-    const unsubscribe = db.collection('chatrooms').onSnapshot((querySnapshot) => {
-    });
+    const unsubscribe = db
+      .collection('chatrooms')
+      .onSnapshot(querySnapshot => {});
     unsubscribe();
-  }
+  };
 
   showNewestRoom = () => {
-    const chatroomRef = db.collection('chatrooms')
-      chatroomRef.orderBy('created', 'desc').limit(1).get().then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const newestRoomData =  doc.data();
+    const chatroomRef = db.collection('chatrooms');
+    chatroomRef
+      .orderBy('created', 'desc')
+      .limit(1)
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          const newestRoomData = doc.data();
           this.setState({
             activeChatroomData: newestRoomData
-          })
-        })
-      })
-  }
+          });
+        });
+      });
+  };
 
-  showActiveChatroom = (chatroomId) => {
+  showActiveChatroom = chatroomId => {
     const activeChatroomRef = db.collection('chatrooms').doc(chatroomId);
-    activeChatroomRef.get().then((doc) => {
-      if(doc.exists) {
+    activeChatroomRef.get().then(doc => {
+      if (doc.exists) {
         const activeChatroomData = doc.data();
         this.setState({
           activeChatroomData
-        })
+        });
       } else {
-        console.log('chatroom not found')
+        console.log('chatroom not found');
       }
-    })
-  }
+    });
+  };
 
   render() {
     return (
       <main className="card">
-        {/* <Header text={'Chatrooms'} /> */}
         <div className="authViewContainer">
-          <Sidebar user={this.props.user} showActiveChatroom={this.showActiveChatroom} />
-          {this.state.activeChatroomData &&
-            <Chatroom user={this.props.user} activeChatroomData={this.state.activeChatroomData} />
-          }
+          <Sidebar
+            user={this.props.user}
+            showActiveChatroom={this.showActiveChatroom}
+          />
+          {this.state.activeChatroomData && (
+            <Chatroom
+              user={this.props.user}
+              activeChatroomData={this.state.activeChatroomData}
+            />
+          )}
         </div>
       </main>
-    )
+    );
   }
 }
 
