@@ -58,10 +58,14 @@ class NewChatroomForm extends Component {
     });
   };
 
+  // on click of + button
   addMembersToChatroom = e => {
+    // make copy of current members
     const addedChatroomMembersCopy = [...this.state.addedChatroomMembers];
+    // validatation
     const hasError = this.validateMembersToBeAdded();
 
+    // if there is an error, update state. otherwise add user
     if (hasError) {
       this.setState({
         chatroomMemberError: hasError,
@@ -98,6 +102,7 @@ class NewChatroomForm extends Component {
     return errorMsg;
   };
 
+  // toggle visibility of newchatroom form
   toggleForm = () => {
     this.setState(this.initalState);
     this.props.toggleForm();

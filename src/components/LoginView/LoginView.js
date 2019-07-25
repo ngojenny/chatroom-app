@@ -1,7 +1,4 @@
-import React, {Component} from 'react';
-
-import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
+import React, { Component } from 'react';
 
 class LoginView extends Component {
   render() {
@@ -9,7 +6,7 @@ class LoginView extends Component {
       <div className="card">
         <button onClick={this.login}>Login</button>
       </div>
-    )
+    );
   }
 }
 

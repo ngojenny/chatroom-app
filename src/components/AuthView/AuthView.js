@@ -15,6 +15,7 @@ class AuthView extends Component {
     };
   }
 
+  // when it first renders, show the messages from the most recently created room
   componentDidMount() {
     if (!this.state.chatroomData) {
       this.showNewestRoom();
@@ -26,6 +27,7 @@ class AuthView extends Component {
     this.detachFirebaseListeners();
   }
 
+  //called before component unmounts, unsubscribes to firebase listeners
   detachFirebaseListeners = () => {
     const unsubscribe = db
       .collection('chatrooms')
@@ -33,6 +35,7 @@ class AuthView extends Component {
     unsubscribe();
   };
 
+  //when component mounts call this function. Queries the database to grab the newest chatroom and displays the messages
   showNewestRoom = () => {
     const chatroomRef = db.collection('chatrooms');
     chatroomRef
@@ -49,6 +52,8 @@ class AuthView extends Component {
       });
   };
 
+  // fires when chatroom thumbnail is clicked
+  // id of chatroom is passed, this is used to query the messages from the chatroom
   showActiveChatroom = chatroomId => {
     const activeChatroomRef = db.collection('chatrooms').doc(chatroomId);
     activeChatroomRef.get().then(doc => {
